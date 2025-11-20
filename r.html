@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Mini Tools App</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<nav>
+  <div onclick="openHotel()">
+    <img src="https://img.icons8.com/color/200/5-star-hotel.png" alt="hotel">
+    <p>Hotel Booking</p>
+  </div>
+
+  <div onclick="showTool('calendar')">
+    <img src="https://img.icons8.com/ios-filled/200/000000/calendar.png" alt="calendar">
+    <p>Calendar</p>
+  </div>
+
+  <div onclick="showTool('converter')">
+    <img src="https://img.icons8.com/ios-filled/200/000000/currency-exchange.png" alt="converter">
+    <p>Converter</p>
+  </div>
+
+  <div onclick="showTool('weather')">
+    <img src="https://img.icons8.com/ios-filled/200/000000/sun.png" alt="weather">
+    <p>Weather</p>
+  </div>
+
+  <div onclick="showTool('notes')">
+    <img src="https://img.icons8.com/ios-filled/200/000000/note.png" alt="notes">
+    <p>Notes</p>
+  </div>
+
+  <div onclick="showTool('map')">
+    <img src="https://img.icons8.com/ios-filled/200/000000/map.png" alt="map">
+    <p>Map</p>
+  </div>
+
+  <div onclick="showTool('calculator')">
+    <img src="https://img.icons8.com/ios-filled/200/000000/calculator.png" alt="calculator">
+    <p>Calculator</p>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- Calendar -->
+  <section id="calendar" class="tool" aria-hidden="true">
+    <h2>Calendar</h2>
+    <div class="calendar-box">
+      <div id="calHeader" class="calendar-header"></div>
+      <div id="calGrid" class="calendar-grid"></div>
+    </div>
+  </section>
+
+  <!-- Converter -->
+  <section id="converter" class="tool" aria-hidden="true">
+    <h2>Currency Converter</h2>
+    <div class="row">
+      <input id="amt" type="number" placeholder="Amount" />
+      <select id="from">
+        <option value="USD">$ USD</option>
+        <option value="INR">₹ INR</option>
+        <option value="EUR">€ EUR</option>
+      </select>
+      <select id="to">
+        <option value="INR">₹ INR</option>
+        <option value="USD">$ USD</option>
+        <option value="EUR">€ EUR</option>
+      </select>
+      <button onclick="convert()">Convert</button>
+    </div>
+    <h3 id="convResult" class="small"></h3>
+  </section>
+
+  <!-- Weather -->
+  <section id="weather" class="tool" aria-hidden="true">
+    <h2>Weather</h2>
+    <div class="row">
+      <input id="city" type="text" placeholder="Enter city (e.g. London)" />
+      <button onclick="getWeather()">Get Weather</button>
+    </div>
+    <div id="weatherResult" class="small"></div>
+  </section>
+
+  <!-- Notes -->
+  <section id="notes" class="tool" aria-hidden="true">
+    <h2>Notes</h2>
+    <textarea id="notearea" placeholder="Write something..."></textarea>
+    <div style="margin-top:10px;">
+      <button onclick="saveNote()">Save</button>
+      <button class="secondary" onclick="clearNote()">Clear</button>
+    </div>
+    <div id="noteStatus" class="small"></div>
+  </section>
+
+  <!-- Map -->
+  <section id="map" class="tool" aria-hidden="true">
+    <h2>Map</h2>
+    <div class="row">
+      <input id="mapSearch" type="text" placeholder="Enter location (e.g. New Delhi)" />
+      <button onclick="loadMap()">Search</button>
+    </div>
+    <div style="margin-top:12px;">
+      <iframe id="mapFrame" width="100%" height="380" loading="lazy" allowfullscreen></iframe>
+    </div>
+  </section>
+
+  <!-- Calculator -->
+  <section id="calculator" class="tool" aria-hidden="true">
+    <h2>Calculator</h2>
+    <div id="calcScreen" class="calcScreen">0</div>
+    <div class="calc-buttons">
+      <button onclick="press('1')">1</button>
+      <button onclick="press('2')">2</button>
+      <button onclick="press('3')">3</button>
+      <button onclick="press('+')">+</button>
+
+      <button onclick="press('4')">4</button>
+      <button onclick="press('5')">5</button>
+      <button onclick="press('6')">6</button>
+      <button onclick="press('-')">-</button>
+
+      <button onclick="press('7')">7</button>
+      <button onclick="press('8')">8</button>
+      <button onclick="press('9')">9</button>
+      <button onclick="press('*')">*</button>
+
+      <button onclick="press('0')">0</button>
+      <button onclick="press('/')">/</button>
+      <button onclick="calculate()">=</button>
+      <button onclick="clearCalc()">C</button>
+    </div>
+  </section>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
