@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Mini Tools App</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+  body { font-family: Arial, sans-serif; margin:0; background:#f4f4f4; }
+  nav {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    padding: 20px;
+    justify-items: center;
+    background: #ffffff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  nav div { text-align:center; cursor:pointer; }
+  nav img { width:150px; height:150px; display:block; margin:0 auto; user-select:none; }
+  nav p { margin:8px 0 0; font-weight:600; color:#333; }
+
+  .container { width:90%; max-width:1000px; margin:28px auto; }
+  .tool { display:none; background:#fff; padding:18px; border-radius:12px; box-shadow:0 1px 6px rgba(0,0,0,0.06); }
+  .tool h2 { margin-top:0; }
+
+  /* calendar */
+  .calendar-box { width:320px; background:#fafafa; padding:14px; border-radius:8px; }
+  .calendar-header { text-align:center; font-weight:700; margin-bottom:8px; }
+  .calendar-grid { display:grid; grid-template-columns:repeat(7, 1fr); gap:6px; text-align:center; }
+  .calendar-grid div { padding:8px; background:#eee; border-radius:6px; }
+  .calendar-today { background:#ffca28 !important; }
+
+  /* small layout niceties */
+  .row { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+  input[type="text"], input[type="number"], textarea { padding:8px; border-radius:6px; border:1px solid #ccc; font-size:14px; }
+  button { padding:8px 12px; border-radius:6px; border:none; background:#2b7cff; color:white; cursor:pointer; }
+  button.secondary { background:#666; }
+  textarea { width:100%; min-height:120px; resize:vertical; }
+  iframe { width:100%; border:0; border-radius:10px; }
+  .small { font-size:13px; color:#555; margin-top:8px; }
+  pre { background:#f8f8f8; padding:10px; border-radius:6px; overflow:auto; }
+</style>
+</head>
+<body>
+
+<!-- NAV: Hotel (No.1) ... Calculator (last) -->
+<nav>
+  <!-- 1. Hotel Booking (opens external) -->
+  <div onclick="openHotel()">
+    <img src="https://img.icons8.com/color/200/5-star-hotel.png" alt="hotel">
+    <p>Hotel Booking</p>
+  </div>
+
+  <!-- 2. Calendar -->
+  <div onclick="showTool('calendar')">
+    <img src="https://img.icons8.com/ios-filled/200/000000/calendar.png" alt="calendar">
+    <p>Calendar</p>
+  </div>
+
+  <!-- 3. Currency Converter -->
+  <div onclick="showTool('converter')">
+    <img src="https://img.icons8.com/ios-filled/200/000000/currency-exchange.png" alt="converter">
+    <p>Converter</p>
+  </div>
+
+  <!-- 4. Weather -->
+  <div onclick="showTool('weather')">
+    <img src="https://img.icons8.com/ios-filled/200/000000/sun.png" alt="weather">
+    <p>Weather</p>
+  </div>
+
+  <!-- 5. Notes -->
+  <div onclick="showTool('notes')">
+    <img src="https://img.icons8.com/ios-filled/200/000000/note.png" alt="notes">
+    <p>Notes</p>
+  </div>
+
+  <!-- 6. Map -->
+  <div onclick="showTool('map')">
+    <img src="https://img.icons8.com/ios-filled/200/000000/map.png" alt="map">
+    <p>Map</p>
+  </div>
+
+  <!-- 7. Calculator (last) -->
+  <div onclick="showTool('calculator')">
+    <img src="https://img.icons8.com/ios-filled/200/000000/calculator.png" alt="calculator">
+    <p>Calculator</p>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- CALENDAR -->
+  <section id="calendar" class="tool" aria-hidden="true">
+    <h2>Calendar</h2>
+    <div class="calendar-box">
+      <div id="calHeader" class="calendar-header"></div>
+      <div id="calGrid" class="calendar-grid"></div>
+    </div>
+  </section>
+
+  <!-- CONVERTER -->
+  <section id="converter" class="tool" aria-hidden="true">
+    <h2>Currency Converter</h2>
+    <div class="row">
+      <input id="amt" type="number" placeholder="Amount" />
+      <select id="from">
+        <option value="USD">$ USD</option>
+        <option value="INR">₹ INR</option>
+        <option value="EUR">€ EUR</option>
+      </select>
+      <select id="to">
+        <option value="INR">₹ INR</option>
+        <option value="USD">$ USD</option>
+        <option value="EUR">€ EUR</option>
+      </select>
+      <button onclick="convert()">Convert</button>
+    </div>
+    <h3 id="convResult" class="small"></h3>
+  </section>
+
+  <!-- WEATHER -->
+  <section id="weather" class="tool" aria-hidden="true">
+    <h2>Weather</h2>
+    <div class="row">
+      <input id="city" type="text" placeholder="Enter city (e.g. London)" />
+      <button onclick="getWeather()">Get Weather</button>
+    </div>
+    <div id="weatherResult" class="small"></div>
+  </section>
+
+  <!-- NOTES -->
+  <section id="notes" class="tool" aria-hidden="true">
+    <h2>Notes</h2>
+    <textarea id="notearea" placeholder="Write something..."></textarea>
+    <div style="margin-top:10px;">
+      <button onclick="saveNote()">Save</button>
+      <button class="secondary" onclick="clearNote()">Clear</button>
+    </div>
+    <div id="noteStatus" class="small"></div>
+  </section>
+
+  <!-- MAP -->
+  <section id="map" class="tool" aria-hidden="true">
+    <h2>Map</h2>
+    <div class="row">
+      <input id="mapSearch" type="text" placeholder="Enter location (e.g. New Delhi)" />
+      <button onclick="loadMap()">Search</button>
+    </div>
+    <div style="margin-top:12px;">
+      <iframe id="mapFrame" width="100%" height="380" loading="lazy" allowfullscreen></iframe>
+    </div>
+  </section>
+
+  <!-- CALCULATOR -->
+  <section id="calculator" class="tool" aria-hidden="true">
+    <h2>Calculator</h2>
+    <div id="calcScreen" style="font-size:22px;padding:10px;background:#eee;border-radius:6px;">0</div>
+    <div style="margin-top:10px;">
+      <button onclick="press('1')">1</button>
+      <button onclick="press('2')">2</button>
+      <button onclick="press('3')">3</button>
+      <button onclick="press('+')">+</button>
+      <br><br>
+      <button onclick="press('4')">4</button>
+      <button onclick="press('5')">5</button>
+      <button onclick="press('6')">6</button>
+      <button onclick="press('-')">-</button>
+      <br><br>
+      <button onclick="press('7')">7</button>
+      <button onclick="press('8')">8</button>
+      <button onclick="press('9')">9</button>
+      <button onclick="press('*')">*</button>
+      <br><br>
+      <button onclick="press('0')">0</button>
+      <button onclick="press('/')">/</button>
+      <button onclick="calculate()">=</button>
+      <button onclick="clearCalc()">C</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* -------------------------
+   showTool: hides all tools and shows the requested one
+   (B) behaviour: nothing visible on load
+   ------------------------- */
+function showTool(id) {
+  document.querySelectorAll('.tool').forEach(el => {
+    el.style.display = 'none';
+    el.setAttribute('aria-hidden','true');
+  });
+  const el = document.getElementById(id);
+  if (el) {
+    el.style.display = 'block';
+    el.setAttribute('aria-hidden','false');
+    if (id === 'calendar') buildCalendar(); // ensure calendar fresh
+  }
+}
+
+/* -------------------------
+   HOTEL BOOKING (open MakeMyTrip hotels) - opens in new tab
+   ------------------------- */
+function openHotel(){
+  // If you prefer Booking.com instead, replace URL
+  window.open("https://www.makemytrip.com/hotels/", "_blank");
+}
+
+/* -------------------------
+   CALCULATOR
+   ------------------------- */
+let calc = '';
+function press(v){
+  calc += v;
+  document.getElementById('calcScreen').innerText = calc || '0';
+}
+function calculate(){
+  try {
+    // safe-ish eval: only digits and operators allowed
+    if (!/^[0-9+\-*/().\s]+$/.test(calc)) { throw 'Invalid'; }
+    calc = String(eval(calc));
+    document.getElementById('calcScreen').innerText = calc;
+  } catch(e){
+    document.getElementById('calcScreen').innerText = 'Error';
+    calc = '';
+  }
+}
+function clearCalc(){ calc=''; document.getElementById('calcScreen').innerText='0'; }
+
+/* -------------------------
+   CALENDAR
+   ------------------------- */
+function buildCalendar(){
+  const today = new Date();
+  const year = today.getFullYear();
+  const monthIndex = today.getMonth();
+
+  const firstDay = new Date(year, monthIndex, 1).getDay();
+  const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
+
+  document.getElementById('calHeader').innerText =
+    today.toLocaleString('default', { month: 'long' }) + ' ' + year;
+
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = '';
+
+  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  days.forEach(d => grid.innerHTML += `<div><strong>${d}</strong></div>`);
+
+  for (let i=0;i<firstDay;i++) grid.innerHTML += `<div></div>`;
+
+  for (let d=1; d<=daysInMonth; d++){
+    const cls = (d === today.getDate()) ? 'calendar-today' : '';
+    grid.innerHTML += `<div class="${cls}">${d}</div>`;
+  }
+}
+
+/* -------------------------
+   CURRENCY CONVERTER (simple rates)
+   ------------------------- */
+function convert(){
+  const a = Number(document.getElementById('amt').value) || 0;
+  const f = document.getElementById('from').value;
+  const t = document.getElementById('to').value;
+  // simple fixed-ish rates (for demo). Replace with live API for production.
+  const rates = {
+    "USD_INR": 83,
+    "EUR_INR": 90,
+    "INR_USD": 1/83,
+    "INR_EUR": 1/90,
+    "USD_EUR": 0.92,
+    "EUR_USD": 1.09
+  };
+  let key = f + '_' + t;
+  let rate = rates[key] ?? (f===t ? 1 : 1);
+  const sym = {USD:'$', INR:'₹', EUR:'€'};
+  document.getElementById('convResult').innerText = `Result: ${sym[t] || ''}${(a * rate).toFixed(2)}`;
+}
+
+/* -------------------------
+   WEATHER (uses your WeatherAPI key provided earlier)
+   ------------------------- */
+const WEATHER_API_KEY = '72aaa8790c614f2a87f142622251711'; // your key from earlier in conversation
+function getWeather(){
+  const city = (document.getElementById('city').value || '').trim();
+  const resultEl = document.getElementById('weatherResult');
+  if (!city) { resultEl.innerText = 'Please enter a city.'; return; }
+
+  resultEl.innerText = 'Loading...';
+  fetch(`https://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${encodeURIComponent(city)}&aqi=yes`)
+    .then(r => {
+      if (!r.ok) throw new Error('Network response not ok');
+      return r.json();
+    })
+    .then(data => {
+      // defensive checks
+      if (!data || !data.current) throw new Error('No weather data');
+      const c = data.current;
+      resultEl.innerHTML = `
+        <div style="display:flex;gap:10px;align-items:center">
+          <img src="${c.condition.icon}" alt="" style="width:48px;height:48px;">
+          <div>
+            <strong>${data.location.name}, ${data.location.country}</strong><br>
+            ${c.temp_c} °C — ${c.condition.text}<br>
+            Humidity: ${c.humidity}%  •  Wind: ${c.wind_kph} kph
+          </div>
+        </div>
+      `;
+    })
+    .catch(err => {
+      console.error(err);
+      resultEl.innerText = 'Could not fetch weather. Try different city.';
+    });
+}
+
+/* -------------------------
+   NOTES (localStorage)
+   ------------------------- */
+const NOTE_KEY = 'mini_tools_note';
+const noteArea = document.getElementById('notearea');
+if (noteArea) noteArea.value = localStorage.getItem(NOTE_KEY) || '';
+function saveNote(){
+  localStorage.setItem(NOTE_KEY, document.getElementById('notearea').value);
+  document.getElementById('noteStatus').innerText = 'Saved ✔';
+  setTimeout(()=> document.getElementById('noteStatus').innerText = '', 1600);
+}
+function clearNote(){
+  localStorage.removeItem(NOTE_KEY);
+  document.getElementById('notearea').value = '';
+  document.getElementById('noteStatus').innerText = 'Cleared';
+  setTimeout(()=> document.getElementById('noteStatus').innerText = '', 1400);
+}
+
+/* -------------------------
+   MAP (Google Maps embed)
+   ------------------------- */
+function loadMap(){
+  const place = (document.getElementById('mapSearch').value || '').trim();
+  if (!place) {
+    alert('Enter a location to search.');
+    return;
+  }
+  const url = `https://www.google.com/maps?q=${encodeURIComponent(place)}&output=embed`;
+  document.getElementById('mapFrame').src = url;
+  showTool('map');
+}
+
+/* -------------------------
+   On first load: do not show anything (B)
+   But build calendar in background for faster display.
+   ------------------------- */
+window.addEventListener('load', () => {
+  // ensure calendar ready (but not visible)
+  buildCalendar();
+  // load saved notes into textarea (redundant safe-check)
+  const ta = document.getElementById('notearea');
+  if (ta) ta.value = localStorage.getItem(NOTE_KEY) || '';
+});
+</script>
+</body>
+</html>
