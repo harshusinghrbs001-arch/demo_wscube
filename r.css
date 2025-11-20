@@ -1,0 +1,45 @@
+body { font-family: Arial, sans-serif; margin:0; background:#f4f4f4; }
+
+nav {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  padding: 20px;
+  justify-items: center;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+nav div { text-align:center; cursor:pointer; }
+nav img { width:150px; height:150px; display:block; margin:auto; user-select:none; }
+nav p { margin:8px 0 0; font-weight:600; color:#333; }
+
+.container { width:90%; max-width:1000px; margin:28px auto; }
+.tool { display:none; background:#fff; padding:18px; border-radius:12px; box-shadow:0 1px 6px rgba(0,0,0,0.06); }
+.tool h2 { margin-top:0; }
+
+.calendar-box { width:320px; background:#fafafa; padding:14px; border-radius:8px; }
+.calendar-header { text-align:center; font-weight:700; margin-bottom:8px; }
+.calendar-grid { display:grid; grid-template-columns:repeat(7, 1fr); gap:6px; text-align:center; }
+.calendar-grid div { padding:8px; background:#eee; border-radius:6px; }
+.calendar-today { background:#ffca28 !important; }
+
+.row { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+input[type="text"], input[type="number"], textarea {
+  padding:8px; border-radius:6px; border:1px solid #ccc; font-size:14px;
+}
+button { padding:8px 12px; border-radius:6px; border:none; background:#2b7cff; color:white; cursor:pointer; }
+button.secondary { background:#666; }
+textarea { width:100%; min-height:120px; resize:vertical; }
+iframe { width:100%; border:0; border-radius:10px; }
+.small { font-size:13px; color:#555; margin-top:8px; }
+
+.calcScreen {
+  font-size:22px;
+  padding:10px;
+  background:#eee;
+  border-radius:6px;
+}
+
+.calc-buttons button {
+  margin:5px;
+}
